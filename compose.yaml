@@ -1,0 +1,65 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+      - /app/.venv
+    command: >
+      bash -c "alembic upgrade head
+      && python -m src.main"
+    environment:
+      DATABASE__HOST: db
+      DATABASE__USER: postgres
+      DATABASE__PASSWORD: mypassword
+      DATABASE__DB: postgres_db
+      IS_DEBUG: True
+    stdin_open: true
+    tty: true
+    networks:
+      - default_network
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+
+  db:
+    image: postgres:17.2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: postgres_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - default_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "8001:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@domain.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - default_network
+
+networks:
+  default_network:
+    
+volumes:
+  pg_data:
+  pgadmin_data:
