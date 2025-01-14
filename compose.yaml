@@ -22,9 +22,7 @@ services:
     networks:
       - default_network
     depends_on:
-      db:
-        condition: service_healthy
-        restart: true
+      - db
 
   db:
     image: postgres:17.2
@@ -37,12 +35,6 @@ services:
       - pg_data:/var/lib/postgresql/data
     networks:
       - default_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
 
   pgadmin4:
     image: dpage/pgadmin4

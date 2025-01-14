@@ -34,6 +34,15 @@ To run the project locally, follow these steps:
     
     ```
     
+### Running Tests
+
+First, set up the project following the setup instructions. Once the project is up and running, execute the following command to run the tests:
+
+```bash
+docker compose exec web pytest
+```
+
+This will run the tests using `pytest` within the `web` container. Make sure the project is properly initialized before executing the command.
 
 ## Docker Configuration
 

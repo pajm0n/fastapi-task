@@ -13,6 +13,7 @@ WORKDIR /app
 
 COPY pyproject.toml poetry.lock /app/
 RUN pip install poetry && poetry install
+RUN poetry install --only dev
 
 ENV PATH="/app/.venv/bin:$PATH"
 
