@@ -114,7 +114,7 @@ def geojson_file(geojson):
 
 
 @pytest.fixture
-def create_project(test_db):
+def create_project(test_db, geojson):
     async def create_project(**kwargs):
         start_date = kwargs.get(
             "start_date", faker.date_between(start_date="-1y", end_date="today")
@@ -130,25 +130,7 @@ def create_project(test_db):
             end_date=end_date,
         )
 
-        area_of_interest_data = kwargs.get(
-            "geojson_data",
-            {
-                "type": "Feature",
-                "geometry": {
-                    "type": "MultiPolygon",
-                    "coordinates": [
-                        [
-                            [
-                                [-52.8430645648562, -5.63351005831322],
-                                [-52.8289481608136, -5.674529420529012],
-                                [-52.8114438198008, -5.6661010219506664],
-                                [-52.8430645648562, -5.63351005831322],
-                            ]
-                        ]
-                    ],
-                },
-            },
-        )
+        area_of_interest_data = kwargs.get("geojson_data", geojson)
 
         area_of_interest = AreaOfInterest(
             geojson_data=area_of_interest_data, project_id=project.id
